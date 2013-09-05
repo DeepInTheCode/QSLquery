@@ -1,0 +1,150 @@
+<!--
+Copyright (C) 2012 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QSL Query for Google Glass</title>
+  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+        media="screen">
+  <link href="/static/bootstrap/css/deepinthecode.css" rel="stylesheet"
+	    media="screen">
+  <link rel="shortcut icon" href="/static/images/hamshield.png">
+  <style>
+    .button-icon {
+      max-width: 75px;
+    }
+
+    .tile {
+      border-left: 1px solid #444;
+      padding: 5px;
+      list-style: none;
+    }
+
+    .btn {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">QSL Query for Google Glass</a><a href="http://deepinthecode.com" class="brand" target="_blank"> - by David Young (@deepinthecode)</a>
+      <div class="nav-collapse collapse">
+        <form class="navbar-form pull-right" action="/signout" method="post">
+          <button type="submit" class="btn">Sign out</button>
+        </form>
+      </div>
+      <!--/.nav-collapse -->
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Main hero unit for a primary marketing message or call to action -->
+  <div class="hero-unit">
+	<div style="text-align:center">
+		<h1><img src="/static/images/hamshield.png" alt="QSL Query logo" style="height:120px"/> <span class="apptitle">QSL Query</span> <img src="/static/images/hamshield.png" alt="QSL Query logo" style="height:120px"/></h1>
+		<br />
+		{{ if .Message }}
+	    <span class="label label-warning">Message: {{ .Message }}</span>
+	    {{ end }}
+		{{ if .TimelineItems }}
+    	<h2><em>Recent Timeline Items</em></h2>
+		{{ end }}
+	</div>
+
+    <div style="margin-top: 5px;">
+      {{ range $item := .TimelineItems }}
+      <ul class="span3 tile">
+        <!--><li><strong>ID: </strong> {{ $item.Id }}
+        </li>-->
+        <li>
+          <!--<strong>Text: </strong>--> {{ $item.Text }}
+        </li>
+        <!--<li>
+          <strong>HTML: </strong> {{ $item.Html }}
+        </li>
+        <li>
+          <strong>Attachments: </strong>
+
+
+          {{ range $item.Attachments }}
+            {{ if HasPrefix .ContentType "image" }}
+            <img src="/attachmentproxy?attachment={{ .Id }}&timelineItem={{ $item.Id }}" width="150">
+            {{ else }}
+            <a href="/attachmentproxy?attachment={{ .Id }}&timelineItem={{ $item.Id }}">Download</a>
+            {{ end }}
+          {{ end }}
+        </li>-->
+		<li>
+			<form action="/" method="post">
+	        	<input type="hidden" name="itemId" value="{{ $item.Id }}">
+		        <input type="hidden" name="operation" value="deleteTimelineItem">
+	        	<button class="btn" type="submit">Delete Timeline Item</button>
+	      	</form>
+		</li>
+      </ul>
+      {{ end }}
+    </div>
+    <div style="clear:both;"></div>
+  </div>
+
+  <div class="row">
+    <div class="span4">
+	  <br /><br /><br />
+	  <div style="text-align:center"><h2><em>About QSL Query</em></h2></div>
+	  <div class="justified">This Glassware is, as far as I know, the first Google Glass application associated with the hobby of amateur radio.  It is used to look up FCC call sign information, primarily for use in filling out QSL cards.  Currently, the information returned by <em>QSL Query</em> includes the name, address, and license class of the person associated with the submitted call sign.  In the box above, you will see recent timeline items (if any exist) created by this app.  In order to look up a call sign, a search card must be present.  To insert a new one, click the appropriate button below.  Using Glass, reply to the search card with the call sign to be researched.  The phonetic alphabet must be used for each letter, not the letter itself.  Shortly, a new card containing the call sign information will show up on your timeline.  You can share the information on Google+ and Facebook,  email it to any contacts from Gmail you've set up in Glass, and read it aloud with Glass.  They can be deleted using Glass or using the button below the item in the box above.  Also, you can delete all items from this app in your timeline by clicking the appropriate button below.<br /><br />73,<br />David Young, AE5DY</div><hr />	
+      <div style="text-align:center"><h2><em>Timeline Functions</em></h2></div>
+      <form action="/" method="post">
+        <input type="hidden" name="operation" value="insertCallsignSearchItem">
+        <button class="btn" type="submit">Insert New Call Sign Search Card</button>
+        <input type="hidden" name="message"
+               value="What amateur radio call sign are you searching for? Reply with NATO phonetics.">
+        <input type="hidden" name="contentType" value="image/png">
+      </form>
+      <br />
+      <form action="/" method="post">
+        <input type="hidden" name="operation" value="deleteAllTimelineItems">
+        <button class="btn" type="submit">Delete All Timeline Items</button>
+        <input type="hidden" name="contentType" value="image/png">
+      </form>
+      <hr />
+      <script src="//about.me/embed/deepinthecode"></script>
+    </div>
+
+    <div class="span7">
+	  <div style="text-align:center"><h2><strong>NATO Phonetic Alphabet</strong></h2></div>
+	  <div class="nato">
+	    <img src="/static/images/FAA_Phonetic_and_Morse_Chart2.svg" alt="NATO Phonetic Alphabet" />
+	  </div>
+	  <hr />
+	  <div class="justified">
+	    <a href="https://developers.google.com/appengine/" target="_blank"><img src="https://developers.google.com/appengine/images/appengine-silver-120x30.gif" alt="Powered by Google App Engine" /></a>
+	    <a href="http://golang.org" target="_blank"><img src="/static/images/gopher.png" alt="Powered by Go" style="width:25%" /></a>
+	    <img src="http://www.w3.org/html/logo/badge/html5-badge-h-solo.png" width="63" height="64" alt="Powered by HTML5" />
+	  </div>
+    </div>
+  </div>
+</div>
+
+<script
+    src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
